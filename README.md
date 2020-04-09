@@ -6,22 +6,54 @@ This is a simple JPEG extension library for Ruby.
 This library only supports reading and writing JPEG files.
 You can access raw RGB data if you need.
 
+## Release
 
-## Requires
+You can download a compiled version for Windows [here](https://github.com/Z-H-Sun/jpeg/releases/download/v0.41/win_v0.41.zip)
+* Place "libjpeg-8.dll" at "C:\Ruby187\bin" and
+* "jpeg.so" at "C:\Ruby187\lib\ruby\1.8\i386-mingw32," assuming you have installed Ruby 1.8.7 at "C:\ruby187"
+* Try `require 'jpeg'`!
 
-IJG's jpeg library (libjpeg)
+If you want to create a single static executable of a Ruby script loaded with `jpeg`, remember to add the dependencies like this:
+```YAML
+file:
+  1.rb:
+  jpeg.so:
+    file: D:/Ruby22-x64/lib/ruby/1.8/i386-mingw32/jpeg.so
+    type: extension-library
+  libjpeg-8.dll:
+    file: D:/Ruby22-x64/bin/libjpeg-8.dll
+    type: extension-library
+```
+Or alternatively, you can place the .so and .dll files in the same folder as the shared version of the executable
 
+## How to build on Windows
 
-## How to build
+* First, you need `Ruby DevKit`. You can download and install it by [RubyInstaller](https://rubyinstaller.org/downloads/)
 
- $ ruby extconf.rb
- $ make
+  * The newest version that supports [ExeRB](https://osdn.net/projects/exerb/) was Ruby [1.8.7](https://dl.bintray.com/oneclick/rubyinstaller/ruby-1.8.7-p374-i386-mingw32.7z)
+  * The corresponding DevKit version was [4.5.2](https://dl.bintray.com/oneclick/rubyinstaller/defunct/DevKit-tdm-32-4.5.2-20110712-1620-sfx.exe) (See details [here](https://github.com/oneclick/rubyinstaller/wiki/Development-Kit))
 
-If you use VC++, run nmake instead of make.
+* The required dependency of this project is IJG's `libjpeg`. You can find [here](http://ijg.org/files/jpegsr8.zip) a souce code archive file for compilation on Windows (*Note: Newer versions may not work along with DevKit 4.5.2!*)
 
-If extconf.rb cannot find libjpeg headers and/or library, you should specify
-their paths by --with-jpeg-include and --with-jpeg-lib options.
+  * Extract the contents to any path without spaces, say, `C:\jpeg-8`
+  * **IMPORTANT!** Make changes to `jconfig.cfg` according to the instructions in `jconfig.txt`. To save the troubles, you can simply replace it with [this corrected version](https://github.com/Z-H-Sun/jpeg/blob/v0.4/jpeg-8/jconfig.cfg)
+  * Run `cmd`, `cd` to that folder, and run `C:\ruby187\DevKit\devkitvars.bat`, assuming you have installed Ruby at `C:\Ruby187`
+  * Run the following commands, and have a cup of coffee. Then you will find the files you need in the folder `build`
+```bash
+mkdir build
+sh -c "./configure --prefix=`PWD`/build"
+make
+make install
+```
 
+* Then, build this library
+
+  * Copy the dependent files generated above in folders `lib` and `include` to the folders with the same names at `C:\ruby187\DevKit\mingw`. Copy the file `C:\jpeg-8\build\bin\libjpeg-8.dll` to `C:\Ruby187\bin`. Then you can discard the remaining files as you wish
+  * If you are lazy, you can directly find a compiled version (but with lower version number) here: [Dev files](http://gnuwin32.sourceforge.net/downlinks/jpeg-lib-zip.php) and [Binaries](http://gnuwin32.sourceforge.net/downlinks/jpeg-bin-zip.php)
+  * `cd` to the directory, run `extconf.rb` and then `make`
+  * There may be error prompts saying "ruby/io.h: no file or directory." Do not panic. Go to `C:\Ruby187\lib\ruby\1.8\i386-mingw32`, create a new folder `ruby`, and copy `rubyio.h` to `ruby/io.h`, and copy `st.h` to `ruby/st.h`. Then try `make` again
+
+* Done! You can copy the generated `jpeg.so` to `C:\Ruby187\lib\ruby\1.8\i386-mingw32` and try if `require 'jpeg'` works now!
 
 ## Reference
 
