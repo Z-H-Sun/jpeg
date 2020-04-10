@@ -9,14 +9,14 @@ You can access raw RGB data if you need.
 ## Release
 
 You can download a compiled version on Windows here:
-* For **Ruby 1.8.x (32-bit)**: either [Newer ver (libjpeg-8)](https://github.com/Z-H-Sun/jpeg/releases/download/v0.41/win_v0.41.zip) or [Older ver (libjpeg-6.2)](https://github.com/Z-H-Sun/jpeg/releases/download/v0.4/win_v0.4.zip)
+* For **Ruby 1.8.x (32-bit)**: either [With libjpeg-8](https://github.com/Z-H-Sun/jpeg/releases/download/v0.41/win_v0.41.zip) or [With libjpeg-6.2](https://github.com/Z-H-Sun/jpeg/releases/download/v0.4/win_v0.4.zip)
   * Place `libjpeg-8.dll` or `jpeg62.dll` at "C:\Ruby187\bin" and
   * `jpeg.so` at "C:\Ruby187\lib\ruby\1.8\i386-mingw32," assuming you have installed Ruby 1.8.7 at "C:\Ruby187"
-* For **Ruby 2.2.x x64**: [Newer ver (libjpeg-8)](https://github.com/Z-H-Sun/jpeg/releases/download/v0.42/win_x64_v0.42.zip)
-  * Place `libjpeg-8.dll` or `jpeg62.dll` at "C:\Ruby22-x64\bin" and
+* For **Ruby x64**: [For 2.2.x (with libjpeg-8)](https://github.com/Z-H-Sun/jpeg/releases/download/v0.42/win_x64_v0.42.zip), [For 2.7.x (with libjpeg-8)](https://github.com/Z-H-Sun/jpeg/releases/download/v0.43/win_x64_v0.43.zip)
+  * Place `libjpeg-8.dll` at "C:\Ruby22-x64\bin" and
   * `jpeg.so` at "C:\Ruby22-x64\lib\ruby\2.2.0\x64-mingw32," assuming you have installed Ruby 2.2.0 at "C:\Ruby22-x64"
-* For **other Ruby versions** on Windows, you must compile by yourself.
-* Try `require 'jpeg'`!
+* For **Ruby versions other than 1.8, 2.2, or 2.7** on Windows, you must compile by yourself.
+* Now try `require 'jpeg'`!
 
 If you want to create a single static executable of a Ruby script loaded with `jpeg`, remember to add the dependencies like this:
 ```YAML
@@ -42,7 +42,8 @@ Or alternatively, you can place the .so and .dll files in the same folder as the
 
   * Extract the contents to any path without spaces, say, `C:\jpeg-8`
   * **IMPORTANT!** Make changes to `jconfig.cfg` according to the instructions in `jconfig.txt`. To save the troubles, you can simply replace it with [this corrected version](https://github.com/Z-H-Sun/jpeg/blob/v0.4/jpeg-8/jconfig.cfg)
-  * Run `cmd`, `cd` to that folder, and run `C:\ruby187\DevKit\devkitvars.bat`, assuming you have installed Ruby at `C:\Ruby187`
+  * Run `cmd`, `cd` to that folder, and run `C:\ruby*\DevKit\devkitvars.bat`, assuming you have installed Ruby at `C:\Ruby*`
+    * **For Ruby 2.4+ x64**, there is no `devkitvars.bat`. Do not panic. You can manually add paths to env var by `SET PATH=C:\Ruby*\msys64\usr\bin;C:\Ruby*\msys64\mingw64\bin;%PATH%`
   * Run the following commands, and have a cup of coffee. Then you will find the files you need in the folder `build`
 ```bash
 mkdir build
@@ -53,12 +54,29 @@ make install
 
 * Then, build this library
 
-  * Copy the dependent files generated above in folders `lib` and `include` to the folders with the same names at `C:\ruby187\DevKit\mingw` \[**For Ruby 2+ x64**, *try `C:\Ruby22-x64\devkit\mingw\x86_64-w64-mingw32`*\]. Copy the file `C:\jpeg-8\build\bin\libjpeg-8.dll` to `C:\Ruby187\bin`\[**For Ruby 2+ x64**, *try `C:\Ruby22-x64\bin`*\]. Then you can discard the remaining files as you wish
-  * If you are lazy, you can directly find a compiled version (but with lower version number) here: [Dev files](http://gnuwin32.sourceforge.net/downlinks/jpeg-lib-zip.php) and [Binaries](http://gnuwin32.sourceforge.net/downlinks/jpeg-bin-zip.php)
+  * Copy the dependent files generated above in folders `lib` and `include` to the folders with the same names at
+    * **For Ruby 1.8**: `C:\ruby187\DevKit\mingw` 
+    * **For Ruby 2+ x64**: `C:\Ruby22-x64\devkit\mingw\x86_64-w64-mingw32`
+    * **For Ruby 2.4+ x64**: `C:\Ruby27-x64\msys64\mingw64\x86_64-w64-mingw32`
+  * Copy the file `C:\jpeg-8\build\bin\libjpeg-8.dll` to `C:\Ruby*\bin`\. Then you can discard the remaining files as you wish
+  * **For Ruby 1.8.x (32 bit)**, If you are lazy, you can directly find a compiled version of libjpeg-6.2 here: [Dev files](http://gnuwin32.sourceforge.net/downlinks/jpeg-lib-zip.php) and [Binaries](http://gnuwin32.sourceforge.net/downlinks/jpeg-bin-zip.php)
+  * Extract the source code archive file to any path you like
   * `cd` to the directory, run `extconf.rb` and then `make`
   * **For Ruby 1.8.x**, There may be error prompts saying "ruby/io.h: no file or directory." Do not panic. Go to `C:\Ruby187\lib\ruby\1.8\i386-mingw32`, create a new folder `ruby`, and copy `rubyio.h` to `ruby/io.h`, and copy `st.h` to `ruby/st.h`. Then try `make` again
 
-* Done! You can copy the generated `jpeg.so` to `C:\Ruby187\lib\ruby\1.8\i386-mingw32` \[**For Ruby 2+ x64**, *try `C:\Ruby22-x64\lib\ruby\2.2.0\x64-mingw32`*\] and try if `require 'jpeg'` works now!
+* Done! You can copy the generated `jpeg.so` to `C:\Ruby*\lib\ruby\*\*-mingw32` and try if `require 'jpeg'` works now!
+
+## How to build on Mac OS or Linux
+
+It is much easier to build libraries on \*nix platforms.
+* The required dependency of this project is IJG's `libjpeg`.
+
+  * For Mac OS, try `brew install libjpeg` (of course you must have Homebrew installed!)
+  * For Linux, try `sudo apt-get install libjpeg-dev` or `sudo yum install libjpeg-devel`
+
+* Extract the source code archive file to any path you like, run `ruby extconf.rb && make`
+* Check the load paths for scripts and binary modules in Ruby, namely `$:`, and copy the generated library file (.bundle for Mac OS or .so for Linux) to any path in that list
+* Now try if `require 'jpeg'` works now
 
 ## Reference
 
